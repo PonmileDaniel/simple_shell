@@ -20,17 +20,49 @@ void sign_handler(int signum)
 	}
 }
 /**
+ * handle_user_input - process user input
+ * @buff: a pointer to the buffer
+ * @n: pointer to the size of buffer
+ * @copy_buff: pointer to the buffer to store the copied input string
+ * @token: pointer to the buffer for tokenization
+ * @delim: delimiter used for tokeniztion
+ */
+void handle_user_input(char **buff, size_t *n, char **copy_buff, char **token, const char *delim)
+{
+	ssize_t count;
+
+	count = getline(buff, n, stdin);
+
+	if (count == -1)
+	{
+		free(*buff);
+		exit(EXIT_SUCCESS);
+	}
+
+	if ((*buff)[count - 1] == '\n')
+		(*buff)[count - 1] = '\0';
+
+	*copy_buff = malloc(sizeof(char) * (count + 1));
+
+	if (*copy_buff == NULL)
+	{
+		perror("malloc");
+		exit(EXIT_FAILURE);
+	}
+	_strcpy(*copy_buff, *buff);
+	*token = strtok(*buff, delim);
+}
+/**
  * main - display prompt
- * @argv: argument
+ * /@argv: argument
  * @env: the environment variable
- * @argc: this like a boolean
+ * argc: this like a boolean
  * Return: 1 if success
  */
 int main(int argc, char **argv, char **env)
 {
 	size_t n = 0;
         char *buff = NULL;
-	ssize_t count = 0;
 	char *copy_buff;
 	char *token;
 	const char *delim = " \n";
@@ -47,23 +79,17 @@ int main(int argc, char **argv, char **env)
 			const char prompt[] = "$ ";
 			write(STDOUT_FILENO, prompt, _strlen(prompt));
 		}
-		count = getline(&buff, &n, stdin);
+		
+		handle_user_input(&buff, &n, &copy_buff, &token, delim);
+		handle_exit(copy_buff);
 
-		if (count == -1)
+		if (strcmp(copy_buff, "env") == 0)
 		{
-			free(buff);
-			exit(EXIT_SUCCESS);
+			_env(env);
+			continue;
 		}
-		if (buff[count - 1] == '\n')
-			buff[count - 1] = '\0';
 
-		copy_buff = malloc(sizeof(char) * count);
-
-		strcpy(copy_buff, buff);
-
-		token = strtok(buff, delim);
-
-		while(token == NULL)
+		while(token != NULL)
 		{
 			n_token++;
 			token = strtok(NULL, delim);
@@ -71,22 +97,36 @@ int main(int argc, char **argv, char **env)
 		n_token++;
 		argv = malloc(sizeof(char *) * n_token);
 
-		token = strtok(copy_buff, delim);
+		if (argv == NULL)
+		{
+			perror("_strdup");
+			return (EXIT_FAILURE);
+		}
 
-		/*path_handle(rgv, cmd);*/
-		/*handle_path(rgv, cmd);*/
+		token = strtok(copy_buff, delim);
 
 		for (i = 0; token != NULL; i++)
 		{
-			argv[i] = malloc(sizeof(char) * _strlen(token));
-			strcpy(argv[i], token);
+			argv[i] = strdup(token);
+			if (argv[i] == NULL)
+			{
+				perror("_strdup");
+				return (EXIT_FAILURE);
+			}
 			token = strtok(NULL, delim);
 		}
-		if (handle_path(argv, argv[0]) != NULL)
+
+		for (; i < n_token; i++)
+		{
+			argv[i] = NULL;
+		}
+		argv[i] = NULL;
+
+		if (handle_path(argv, argv[0]) != NULL || argv[0][0] == '/')
 		{
 			getpiddd(argv, copy_buff);
 		}
-		else
+		else if (argv[0][0] != '/')
 		{
 			write(STDERR_FILENO, "Error: Command not found or not executable in PATH.\n", 54);
 		}

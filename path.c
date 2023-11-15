@@ -15,7 +15,6 @@ char *get_path(const char *command)
 
 	if (path_env == NULL)
 	{
-		write(STDERR_FILENO, "Error: PATH environment variable not set.\n", 42);
 		return (NULL);
 	}
 
@@ -30,8 +29,7 @@ char *get_path(const char *command)
 
 	while (path != NULL)
 	{
-		char *full_path = malloc(strlen(path) + strlen(command) + 2);
-
+		char *full_path = malloc(strlen(path) + strlen(command) + 2 + 1);
 		if (full_path == NULL)
 		{
 			perror("malloc");
@@ -49,12 +47,16 @@ char *get_path(const char *command)
 		free(full_path);
 		path = strtok(NULL, ":");
 	}
-	write(STDERR_FILENO, "Error: Command not found in PATH.\n", 35);
+	/*write(STDERR_FILENO, "Error: Command not found in PATH.\n", 35);*/
+	free(path_env_copy);
 	return (NULL);
 }
 
 /**
- *
+ * handle_path - resolve the fulll path
+ * @rgv: array of strings representing
+ * @cmd: original command string
+ * Return: dynamically allocated string
  */
 char *handle_path(char **rgv, const char *cmd)
 {

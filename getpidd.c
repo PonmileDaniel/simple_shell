@@ -1,5 +1,8 @@
 #include "shell.h"
 /**
+ * getpiddd - create a child process and execute
+ * @rvg: An array of str
+ * @cmd: the original command str
  */
 void getpiddd(char **rvg, char *cmd)
 {

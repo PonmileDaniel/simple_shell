@@ -6,7 +6,7 @@
  * @n: integer argument
  * Return: dest
  */
-char *_strcpy(char *dest, char *src, int n)
+char *_trcpy(char *dest, char *src, int n)
 {
 	int i;
 
