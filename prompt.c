@@ -29,7 +29,7 @@ void sign_handler(int signum)
  */
 void h(char **buff, size_t *n, char **copy_bu, char **token, const char *delim)
 {
-	ssize_t count;
+	ssize_t count = 0;
 
 	count = getline(buff, n, stdin);
 
@@ -41,6 +41,11 @@ void h(char **buff, size_t *n, char **copy_bu, char **token, const char *delim)
 
 	if ((*buff)[count - 1] == '\n')
 		(*buff)[count - 1] = '\0';
+
+	/*if (*copy_bu != NULL)
+	{
+		free(*copy_bu);
+	}*/
 
 	*copy_bu = malloc(sizeof(char) * (count + 1));
 
@@ -122,10 +127,15 @@ void execute_command(char **argv, char *copy_bu, char **env)
 		write(STDERR_FILENO, program_name, strlen(program_name));
 		write(STDERR_FILENO, error_message, strlen(error_message));
 	}
-	for (i = 0; i < n_token; i++)
+	if (argv != NULL)
 	{
-		free(argv[i]);
+		for (i = 0; i < n_token; i++)
+		{
+			free(argv[i]);
+		}
+		free(argv);
 	}
+	free(copy_bu);
 }
 /**
  * main - display prompt
