@@ -19,7 +19,7 @@ void getpiddd(char **rvg, char *cmd)
 	}
 	if (child == 0)
 	{
-		if(execve(rvg[0], rvg, NULL) == -1)
+		if (execve(rvg[0], rvg, NULL) == -1)
 		{
 			perror("Error");
 		}

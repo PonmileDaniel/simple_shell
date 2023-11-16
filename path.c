@@ -1,10 +1,9 @@
 #include "shell.h"
 
 /**
- * path_handle - handle the path func
- * @rgv: rgv argument
- * @cmd: command set
- * Returb: command for
+ * get_path - handle the path func
+ * @command: rgv argument
+ * Return: command for
  */
 
 char *get_path(const char *command)
@@ -17,7 +16,6 @@ char *get_path(const char *command)
 	{
 		return (NULL);
 	}
-
 	path_env_copy = strdup(path_env);
 
 	if (path_env_copy == NULL)
@@ -26,10 +24,10 @@ char *get_path(const char *command)
 		return (NULL);
 	}
 	path = strtok(path_env_copy, ":");
-
 	while (path != NULL)
 	{
 		char *full_path = malloc(strlen(path) + strlen(command) + 2 + 1);
+
 		if (full_path == NULL)
 		{
 			perror("malloc");
@@ -41,13 +39,13 @@ char *get_path(const char *command)
 
 		if (access(full_path, F_OK | X_OK) == 0)
 		{
+			free(path_env_copy);
 			return (full_path);
 		}
 
 		free(full_path);
 		path = strtok(NULL, ":");
 	}
-	/*write(STDERR_FILENO, "Error: Command not found in PATH.\n", 35);*/
 	free(path_env_copy);
 	return (NULL);
 }
@@ -61,6 +59,7 @@ char *get_path(const char *command)
 char *handle_path(char **rgv, const char *cmd)
 {
 	char *path = get_path(cmd);
+
 	if (path == NULL)
 	{
 		return (NULL);
@@ -74,5 +73,5 @@ char *handle_path(char **rgv, const char *cmd)
 		return (NULL);
 	}
 
-	return rgv[0];
+	return (rgv[0]);
 }

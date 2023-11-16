@@ -8,6 +8,7 @@
 char *_strcat(char *dest, const char *src)
 {
 	size_t i;
+
 	i = 0;
 
 	while ((dest[i] = src[i]) != '\0')
@@ -53,6 +54,7 @@ char *_strdup(const char *str)
 char *_strcpy(char *dest, const char *src)
 {
 	size_t i;
+
 	i = 0;
 
 	while ((dest[i] = src[i]) != '\0')

@@ -2,7 +2,7 @@
 /**
  * _strddup - used to duplicate a string
  * @str: string
- * Eeturn: duplicate if successful
+ * Return: duplicate if successful
  */
 
 char *_strddup(const char *str)

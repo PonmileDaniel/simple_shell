@@ -20,14 +20,14 @@ void sign_handler(int signum)
 	}
 }
 /**
- * handle_user_input - process user input
+ * h - process user input
  * @buff: a pointer to the buffer
  * @n: pointer to the size of buffer
- * @copy_buff: pointer to the buffer to store the copied input string
+ * @copy_bu: pointer to the buffer to store the copied input string
  * @token: pointer to the buffer for tokenization
  * @delim: delimiter used for tokeniztion
  */
-void handle_user_input(char **buff, size_t *n, char **copy_buff, char **token, const char *delim)
+void h(char **buff, size_t *n, char **copy_bu, char **token, const char *delim)
 {
 	ssize_t count;
 
@@ -42,101 +42,124 @@ void handle_user_input(char **buff, size_t *n, char **copy_buff, char **token, c
 	if ((*buff)[count - 1] == '\n')
 		(*buff)[count - 1] = '\0';
 
-	*copy_buff = malloc(sizeof(char) * (count + 1));
+	*copy_bu = malloc(sizeof(char) * (count + 1));
 
-	if (*copy_buff == NULL)
+	if (*copy_bu == NULL)
 	{
 		perror("malloc");
 		exit(EXIT_FAILURE);
 	}
-	_strcpy(*copy_buff, *buff);
+	_strcpy(*copy_bu, *buff);
 	*token = strtok(*buff, delim);
 }
 /**
+ * tokenize_input - tokenize input
+ * @copy_bu: copy buffer
+ * @argv: argument
+ * Return: new token
+ */
+int tokenize_input(char *copy_bu, char ***argv)
+{
+	char *token;
+	const char *delim = " \n";
+	int n_token = 0;
+	int i;
+
+	token = strtok(copy_bu, " \n");
+	while (token != NULL)
+	{
+		n_token++;
+		token = strtok(NULL, delim);
+	}
+	n_token++;
+
+	*argv = malloc(sizeof(char *) * n_token);
+	if (*argv == NULL)
+	{
+		perror("_strdup");
+		exit(EXIT_FAILURE);
+	}
+	token = strtok(copy_bu, " \n");
+	for (i = 0; token != NULL; i++)
+	{
+		(*argv)[i] = _strdup(token);
+		if ((*argv)[i] == NULL)
+		{
+			perror("strdup");
+			exit(EXIT_FAILURE);
+		}
+		token = strtok(NULL, delim);
+	}
+	(*argv)[i] = NULL;
+
+	return (n_token);
+}
+
+/**
+ * execute_command - this exec commands
+ * @argv: argument
+ * @copy_bu: copy buffer
+ * @env: environment
+ */
+void execute_command(char **argv, char *copy_bu, char **env)
+{
+	int n_token;
+	int i;
+	(void) **env;
+
+	n_token = tokenize_input(copy_bu, &argv);
+	if (handle_path(argv, argv[0]) != NULL || argv[0][0] == '/')
+	{
+		getpiddd(argv, copy_bu);
+	}
+	else if (argv[0][0] != '/')
+	{
+		write(STDERR_FILENO, "Error: Command not found or not .\n", 54);
+	}
+	for (i = 0; i < n_token; i++)
+	{
+		free(argv[i]);
+	}
+}
+/**
  * main - display prompt
- * /@argv: argument
+ * @argv: argument
  * @env: the environment variable
- * argc: this like a boolean
+ * @argc: this like a boolean
  * Return: 1 if success
  */
 int main(int argc, char **argv, char **env)
 {
 	size_t n = 0;
-        char *buff = NULL;
-	char *copy_buff;
+	char *buff = NULL;
+	char *copy_bu;
 	char *token;
 	const char *delim = " \n";
-	int n_token = 0;
-	int i;
 	(void)argc;
 	(void)env;
 
 	signal(SIGINT, sign_handler);
-	while(1)
+	while (1)
 	{
 		if (isatty(STDIN_FILENO))
 		{
 			const char prompt[] = "$ ";
+
 			write(STDOUT_FILENO, prompt, _strlen(prompt));
 		}
-		
-		handle_user_input(&buff, &n, &copy_buff, &token, delim);
-		handle_exit(copy_buff);
 
-		if (strcmp(copy_buff, "env") == 0)
+		h(&buff, &n, &copy_bu, &token, delim);
+		handle_exit(copy_bu);
+
+		if (strcmp(copy_bu, "env") == 0)
 		{
 			_env(env);
 			continue;
 		}
-
-		while(token != NULL)
-		{
-			n_token++;
-			token = strtok(NULL, delim);
-		}
-		n_token++;
-		argv = malloc(sizeof(char *) * n_token);
-
-		if (argv == NULL)
-		{
-			perror("_strdup");
-			return (EXIT_FAILURE);
-		}
-
-		token = strtok(copy_buff, delim);
-
-		for (i = 0; token != NULL; i++)
-		{
-			argv[i] = strdup(token);
-			if (argv[i] == NULL)
-			{
-				perror("_strdup");
-				return (EXIT_FAILURE);
-			}
-			token = strtok(NULL, delim);
-		}
-
-		for (; i < n_token; i++)
-		{
-			argv[i] = NULL;
-		}
-		argv[i] = NULL;
-
-		if (handle_path(argv, argv[0]) != NULL || argv[0][0] == '/')
-		{
-			getpiddd(argv, copy_buff);
-		}
-		else if (argv[0][0] != '/')
-		{
-			write(STDERR_FILENO, "Error: Command not found or not executable in PATH.\n", 54);
-		}
-		for (i = 0; i < n_token; i++)
-		{
-			free(argv[i]);
-		}
+		execute_command(argv, copy_bu, env);
+		free(copy_bu);
 	}
-	free(copy_buff);
+
 	free(buff);
 	return (0);
 }
-
