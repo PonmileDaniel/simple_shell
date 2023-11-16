@@ -1,7 +1,7 @@
 #include "shell.h"
 /**
  * _env - environment variable
- * env: char character
+ * @env: char character
  */
 void _env(char **env)
 {
