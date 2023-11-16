@@ -1,6 +1,6 @@
 #ifndef SHELL_H
 #define SHELL_H
-#define _GNU_SOURCE
+
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -9,14 +9,10 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <sys/stat.h>
-#include <limits.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <stdarg.h>
-#include <ctype.h>
 #define MAX 10
 
-
+/* prompt.c */
+void prompt(void);
 
 void sign_handler(int signum);
 int stringlen(const char *str);
@@ -31,8 +27,6 @@ void handle_exit(char *input);
 int _strcmp(const char *s1, const char *s2);
 void _env(char **env);
 
-/* built-in funcs */
-void shell_cd(char **args)
-void shell_exit(char **args);
+
 
 #endif
