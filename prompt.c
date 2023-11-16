@@ -107,6 +107,8 @@ void execute_command(char **argv, char *copy_bu, char **env)
 	int i;
 	(void) **env;
 
+	argv = NULL;
+
 	n_token = tokenize_input(copy_bu, &argv);
 	if (handle_path(argv, argv[0]) != NULL || argv[0][0] == '/')
 	{
@@ -114,7 +116,11 @@ void execute_command(char **argv, char *copy_bu, char **env)
 	}
 	else if (argv[0][0] != '/')
 	{
-		write(STDERR_FILENO, "Error: Command not found or not .\n", 54);
+		const char program_name[] = "./hsh: ";
+		const char error_message[] = "No such file or directory \n";
+
+		write(STDERR_FILENO, program_name, strlen(program_name));
+		write(STDERR_FILENO, error_message, strlen(error_message));
 	}
 	for (i = 0; i < n_token; i++)
 	{
@@ -137,6 +143,7 @@ int main(int argc, char **argv, char **env)
 	const char *delim = " \n";
 	(void)argc;
 	(void)env;
+
 
 	signal(SIGINT, sign_handler);
 	while (1)
