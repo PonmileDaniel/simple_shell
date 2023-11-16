@@ -24,4 +24,7 @@ void handle_exit(char *input);
 int _strcmp(const char *s1, const char *s2);
 void _env(char **env);
 
+/* built-in funcs */
+void shell_cd(char **args)
+
 #endif
