@@ -7,6 +7,6 @@
  */
 void prompt(void)
 {
-	_puts(PROMPT);
+	puts(PROMPT);
 	fflush(stdout);
 }
