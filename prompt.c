@@ -42,11 +42,6 @@ void h(char **buff, size_t *n, char **copy_bu, char **token, const char *delim)
 	if ((*buff)[count - 1] == '\n')
 		(*buff)[count - 1] = '\0';
 
-	/*if (*copy_bu != NULL)
-	{
-		free(*copy_bu);
-	}*/
-
 	*copy_bu = malloc(sizeof(char) * (count + 1));
 
 	if (*copy_bu == NULL)
