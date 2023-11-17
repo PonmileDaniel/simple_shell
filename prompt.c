@@ -51,6 +51,12 @@ void h(char **buff, size_t *n, char **copy_bu, char **token, const char *delim)
 	}
 	_strcpy(*copy_bu, *buff);
 	*token = strtok(*buff, delim);
+
+	if (*buff == NULL)
+	{
+		free(*copy_bu);
+		exit(EXIT_FAILURE);
+	}
 }
 /**
  * tokenize_input - tokenize input
@@ -92,6 +98,15 @@ int tokenize_input(char *copy_bu, char ***argv)
 	}
 	(*argv)[i] = NULL;
 
+	if (*argv != NULL)
+	{
+		for (i = 0; i < n_token; i++)
+		{
+			free((*argv)[i]);
+		}
+		free(*argv);
+	}
+
 	return (n_token);
 }
 
@@ -121,6 +136,8 @@ void execute_command(char **argv, char *copy_bu, char **env)
 
 		write(STDERR_FILENO, program_name, strlen(program_name));
 		write(STDERR_FILENO, error_message, strlen(error_message));
+
+		exit(2);
 	}
 	if (argv != NULL)
 	{
@@ -169,7 +186,7 @@ int main(int argc, char **argv, char **env)
 			continue;
 		}
 		execute_command(argv, copy_bu, env);
-		free(copy_bu);
+		/*free(copy_bu);*/
 	}
 
 	free(buff);

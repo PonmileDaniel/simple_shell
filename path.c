@@ -64,12 +64,12 @@ char *handle_path(char **rgv, const char *cmd)
 	{
 		return (NULL);
 	}
-	rgv[0] = strdup(path);
+	rgv[0] = _strdup(path);
 	free(path);
 
 	if (rgv[0] == NULL)
 	{
-		perror("strdup");
+		perror("_strdup");
 		return (NULL);
 	}
 
