@@ -122,7 +122,7 @@ void execute_command(char **argv, char *copy_bu, char **env)
 	int i;
 	(void) **env;
 
-	argv = NULL;
+	/*argv = NULL;*/
 
 	n_token = tokenize_input(copy_bu, &argv);
 	if (handle_path(argv, argv[0]) != NULL || argv[0][0] == '/')
